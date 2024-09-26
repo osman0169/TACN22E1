@@ -1,0 +1,71 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
+using System.Linq;
+
+namespace EFCodeFirstConsoleApp
+{
+    // Define the Student class with properties mapped to database columns
+    public class Student
+    {
+        [Key] // This marks the Id property as the primary key
+        public int Id { get; set; }
+
+        [Required] // Marks FirstName as required in the database
+        public string FirstName { get; set; }
+
+        [Required] // Marks LastName as required in the database
+        public string LastName { get; set; }
+    }
+
+    // Define the StudentContext which will manage the database
+    public class StudentContext : DbContext
+    {
+        // DbSet will map the Student class to the Students table in the database
+        public DbSet<Student> Students { get; set; }
+
+        // Define the constructor with a connection string name
+        public StudentContext() : base("StudentDb")
+        {
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Create an instance of the DbContext (StudentContext)
+            using (var context = new StudentContext())
+            {
+                // Check if any students exist in the database
+                if (!context.Students.Any())
+                {
+                    // If no students exist, create a new student
+                    var student = new Student
+                    {
+                        FirstName = "Osman",
+                        LastName = "Caliskan"
+                    };
+
+                    // Add the new student to the DbSet
+                    context.Students.Add(student);
+
+                    // Save changes to the database
+                    context.SaveChanges();
+
+                    Console.WriteLine($"Student {student.FirstName} {student.LastName} has been added to the database.");
+                }
+                else
+                {
+                    Console.WriteLine("Database already contains students:");
+                    foreach (var student in context.Students)
+                    {
+                        Console.WriteLine($"{student.Id}: {student.FirstName} {student.LastName}");
+                    }
+                }
+            }
+
+            Console.ReadLine();
+        }
+    }
+}
