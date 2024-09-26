@@ -1,0 +1,76 @@
+using System;
+
+namespace EmployeeQuitApp
+{
+    // Define the IQuittable interface with a method Quit
+    interface IQuittable
+    {
+        // Define a void method called Quit in the interface
+        void Quit();
+    }
+
+    // The Employee class now inherits from the IQuittable interface
+    class Employee : IQuittable
+    {
+        // Properties for Employee Id, FirstName, and LastName
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        // Overload the '==' operator to compare Employee objects by their Id property
+        public static bool operator ==(Employee emp1, Employee emp2)
+        {
+            if (ReferenceEquals(emp1, null) && ReferenceEquals(emp2, null))
+                return true;
+            if (ReferenceEquals(emp1, null) || ReferenceEquals(emp2, null))
+                return false;
+            return emp1.Id == emp2.Id;
+        }
+
+        // Overload the '!=' operator
+        public static bool operator !=(Employee emp1, Employee emp2)
+        {
+            return !(emp1 == emp2);
+        }
+
+        // Override Equals and GetHashCode for consistency with the overloaded operators
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            Employee emp = (Employee)obj;
+            return Id == emp.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        // Implement the Quit() method from the IQuittable interface
+        public void Quit()
+        {
+            // This could represent an employee resigning
+            Console.WriteLine($"{FirstName} {LastName} (ID: {Id}) has quit the job.");
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Instantiate an Employee object and set its properties
+            Employee employee = new Employee { Id = 1, FirstName = "John", LastName = "Doe" };
+
+            // Use polymorphism to create an object of type IQuittable
+            IQuittable quittableEmployee = employee;
+
+            // Call the Quit() method on the object using the interface type
+            quittableEmployee.Quit();
+
+            // Prevent the console from closing immediately
+            Console.ReadLine();
+        }
+    }
+}
